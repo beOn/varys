@@ -4,10 +4,13 @@ import os
 from setuptools import setup
 
 def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+    fpath = os.path.join(os.path.dirname(__file__), fname)
+    if os.path.exists(fpath):
+      return open(fpath).read()
+    return ""
 
 setup(name='varys',
-      version='0.5',
+      version='0.5.0',
       author='Ben Acland',
       author_email='benacland@gmail.com',
       description='For parsing and reformatting behavioral event logs.',
