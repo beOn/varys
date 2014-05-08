@@ -44,7 +44,7 @@ Varys uses scipy, which in turn uses numpy, and as of yet we're too lazy to do
 the fancy dancing needed to auto-install numpy as a dependency. So it'll take
 two steps:
 
-```python
+```
 pip install numpy
 pip install varys
 ```
