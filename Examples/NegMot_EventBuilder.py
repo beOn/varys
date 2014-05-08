@@ -38,6 +38,7 @@ class NetMot_EventBuilder(RowWise_fMRI_EventBuilder):
         self.output_dir = "/scratch1/negmot_event_builder/parsed_events/"
         self.run_field = "Procedure[Block]"
         self.output_formats = ["spm","pickle","txt"]
+        self.TR = 2.5
 
     def events_for_row(self, row):
         events = []
@@ -108,10 +109,6 @@ class NetMot_EventBuilder(RowWise_fMRI_EventBuilder):
     def tr_count_for_run(self, run_idx, file_name, raw_rows, events):
         """ return the TR count for the given run. """
         return 215
-
-    def get_tr(self):
-        """ return the TR used for bold runs """
-        return 2.5
 
 # The following is provided as an example only... typically, you might simply implement
 # the above, and call it from another script.

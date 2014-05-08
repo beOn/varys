@@ -187,6 +187,10 @@ class fMRI_EventBuilder(EventBuilder):
     These include the use of TR to calculate run durations, and passing
     TR to write_set so we can write fidl files.
     """
+    def __init__(self,*args,**kwargs):
+        self.TR = None
+        super(fMRI_EventBuilder, self).__init__(*args, **kwargs)
+
     def duration_for_run(self, run_idx, file_name, raw_rows, events):
         return self.tr_count_for_run(run_idx, file_name, raw_rows, events) * self.get_tr()
 
@@ -201,7 +205,9 @@ class fMRI_EventBuilder(EventBuilder):
 
     def get_tr(self):
         """ return the TR used for bold runs """
-        raise NotImplementedError()    
+        if not self.TR:
+            raise ValueError("TR must not be None")
+        return self.TR
 
 class TrialWise_EventBuilder(EventBuilder):
     """a variant that collects events by run.

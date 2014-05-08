@@ -34,6 +34,7 @@ class ETCC_EventBuilder(RowWise_fMRI_EventBuilder):
         self.output_dir = '/Volumes/Purkinje/fmreyeball/data/parsed_events/'
         self.run_field = 'Session'
         self.output_formats = ['fidl']
+        self.TR = 2.5
     
     def events_for_row(self, row):
         # onset will be in one of these two fields
@@ -100,10 +101,6 @@ class ETCC_EventBuilder(RowWise_fMRI_EventBuilder):
             return 180
         else:
             return 230
-
-    def get_tr(self):
-        """ return the TR used for bold runs """
-        return 2.5
 
 # The following is provided as an example only... typically, you might simply implement
 # the above, and call it from another script.
