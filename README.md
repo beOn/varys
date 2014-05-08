@@ -42,7 +42,7 @@ Installation
 
 Varys uses scipy, which in turn uses numpy, and as of yet we're too lazy to do the fancy dancing neede to auto-install numpy as a dependency. So it'll take two steps:
 
-```
+```python
 pip install numpy
 pip install varys
 ```
@@ -89,7 +89,7 @@ RowWise_EventBuilder
 
 This is probably the most useful subclass, and is pretty simple. Let's take a look.
 
-```
+```python
 from varys.EventBuilder import RowWise_EventBuilder
 class basic_EventBuilder(RowWise_EventBuilder):
     def __init__(self):
@@ -123,7 +123,7 @@ To get the details on this and the other subclasses, check out the noted in the 
 
 ```events_for_row``` gets called once per row of data in your original file, and is expected to return a list of dicts (one dict per event). You might be wondering what this ```set``` entry is all about, and why we return a list of events, instead of just one. From time to time, analysis will require that you create several different event sets - one including all trials, and one including only those trials which were answered correctly, for example. Suppose we wanted to do exactly this for the current example. Then we'd change the if block of ```events_for_row``` to read as follows:
 
-```
+```python
     if name and onset:
         events.append(["name":name,
                        "onset":onset,
@@ -142,7 +142,7 @@ Note that we used a different ```set``` for the second event. This will cause Ev
 
 The ```init``` method just presets a few values specific to this experiment. Note that you can override these. If you moved the script to another machine, where the data was instead in ```/my_data/subjects/sN/run_M.txt``` (remembering that N and M are two-digit subject and run numbers, respectively), and you wanted to save the results to ```/analyses/new_data```, you don't have to modify the subclass. You can just change a couple of values, then call ```run()```:
 
-```
+```python
 eb = basic_EventBuilder()
 eb.data_glob_templates = ["/my_data/subjects/s%02d/run_*.txt"]
 eb.output_dir = '/analyses/new_data'
@@ -156,7 +156,7 @@ RowWise_fMRI_EventBuilder
 
 This class is pretty much the same as RowWise_EventBuilder, but has a few extra features specific to fMRI. Let's take a look, and go through it afterwards. I'll omit everything that would be identical, but do remember to include it in your own subclasses.
 
-```
+```python
 from varys.EventBuilder import RowWise_EventBuilder
 class basic_fMRI_EventBuilder(RowWise_EventBuilder):
     def __init__(self):
@@ -179,7 +179,7 @@ So, there are really only two differences here, and their utility might not be i
 
 So, who gives a flying leap at a rolling doughnut about TRs and how many there are per run? Anyone who needs to concatenate their runs, that's who. We use these two properties to figure out how much time to add to the onset of all events for each run. So if you have 100 TRs of length .7 each in run 1, every event in run 2 will have 70.0 added to its onset time. But take note, *this will only happen if you set the ```concat_sets``` property to a list of the sets whose runs you'd like to concatenate*. We do it this way because you may not want to concatenate runs for every event set. So, if we wanted to concatenate runs, but only for the event set that contains accurate response events (acc_events), we'd change the init method like so:
 
-```
+```python
     def __init__(self):
         super(basic_fMRI_EventBuilder, self).__init__()
         # same as RowWise_EventBuilder, with one extra property:
@@ -189,11 +189,40 @@ So, who gives a flying leap at a rolling doughnut about TRs and how many there a
 
 Take note, some output formats, such as fidl, absolutely require concatenated runs. If you specify one of these output formats, *all runs in all sets will be automatically concatenated*, even if you don't set concat_sets.
 
-TODO:
-- FixedDuration_EventBuilder
-- concatenating runs
-- skip output
-- run column
+Skipping Output
+---------------
+
+Sometimes, you don't actually want to write the event set out to any file. You just want to parse the events, then keep working with them in your code.
+
+To do this, set the ```skip_output``` property to True, then retrieve the values for the subject you're interested in. Working with our ```basic_EventBuilder```, if we wanted to get the list of lists of event dicts for subject 1, we'd do as follows:
+
+```python
+eb = basic_EventBuilder()
+eb.skip_output = True
+eb.run()
+sub_num = 1
+s1_events = eb.sub_data[sub_num]["acc_events"]
+```
+
+One Giant Input File
+--------------------
+
+It may be the case that, instead of having one input file per run, everything's in one big table, and there's some column whose value changes every time a new run's data begins. To handle this, just set the ```run_field``` property to the name of that column. If this were the case for our example, and the name of the column was "run_number", we'd just make a slight modificaiton to the init method:
+
+```python
+class basic_EventBuilder(RowWise_EventBuilder):
+    def __init__(self):
+        super(basic_EventBuilder, self).__init__()
+        # everything is the same as before, but add:
+        self.run_field = "run_number"
+    # everything else is the same as before
+```
+
+Not so bad, eh?
+
+TODO
+----
+- FixedDuration_EventBuilder, once it's ready
 
 Reporting Bugs, Requesting Features
 ===================================
