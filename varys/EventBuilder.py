@@ -31,16 +31,16 @@ class EventBuilder(object):
 
     # TODO: look for multiple runs in the same file if you have run_field
     """
-    subjects = None
-    data_glob_templates = None
-    run_field = None
-    output_dir = None
-    concat_sets = None
-    output_formats = None
-    current_sub = None
-    sub_data = None
 
     def __init__(self,*args,**kwargs):
+        self.subjects = None
+        self.data_glob_templates = None
+        self.run_field = None
+        self.output_dir = None
+        self.concat_sets = None
+        self.output_formats = None
+        self.current_sub = None
+        self.sub_data = None
         self.output_dir = os.path.join(os.getcwd(), 'events_parsed')
         self.output_formats = ['pickle']
         self.last_event_sets = None
