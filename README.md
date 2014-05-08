@@ -58,6 +58,7 @@ Supported Formats
 Currently supported formats are:
 
 Input: .txt, .tdf, .csv, .fidl
+
 Output: spm, fidl, pickle, txt (tab delimited)
 
 Examples
