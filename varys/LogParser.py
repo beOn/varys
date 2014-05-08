@@ -44,7 +44,7 @@ class TDF_LogParser(LogParser):
         return read_tdf(file_path)
 
 class CSV_LogParser(LogParser):
-    """A parser that reads tab delimited files"""
+    """A parser that reads csv files"""
     @classmethod
     def supported_exts(self):
         return ['.csv',]
@@ -53,7 +53,7 @@ class CSV_LogParser(LogParser):
         return read_csv(file_path)
 
 class FIDL_LogParser(LogParser):
-    """A parser that reads tab delimited files"""
+    """A parser that reads FIDL files"""
     @classmethod
     def supported_exts(self):
         return ['.fidl',]

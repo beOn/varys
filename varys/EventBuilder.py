@@ -5,24 +5,25 @@ from LogParser import *
 from FileWriter import *
 
 class EventBuilder(object):
-    """passes a list of files to the appropriate LogParser
-    subclass to get a list of dictionaries representing rows
-    of the log file, then passes those lists to self.events_for_rows()
-    to generate a list of dictionaries representing events.
+    """ Abstract EventBuilder class.
 
-    The start of a new file is always the start of a new run.
-    If run_field is set, we'll also break up the files into sections
-    with identical values for that field. Take note, we'll do this by
-    stepping through the rows in sequence, and looking for changes in
-    the field's value. This means that if the field has value A, then B,
-    then A again, you will get three runs out of that file. This would
-    be a weird thing to have happen in your file, but be forewarned.
+    passes a list of files to the appropriate LogParser subclass to get a list
+    of dictionaries representing rows of the log file, then passes those lists
+    to self.events_for_rows() to generate a list of dictionaries representing
+    events.
 
-    Note that we'll take care of adding the duration of the preceding
-    runs to any onsets provided. Just implement duration_for_run(), and
-    we'll handle the rest. That means that if you're going to be
-    concatenating runs, you only need to provide onsets relative to the
-    beginning of the run.
+    The start of a new file is always the start of a new run. If run_field is
+    set, we'll also break up the files into sections with identical values for
+    that field. Take note, we'll do this by stepping through the rows in
+    sequence, and looking for changes in the field's value. This means that if
+    the field has value A, then B, then A again, you will get three runs out
+    of that file. This would be a weird thing to have happen in your file, but
+    be forewarned.
+
+    Note that we'll take care of adding the duration of the preceding runs to
+    any onsets provided. Just implement duration_for_run(), and we'll handle
+    the rest. That means that if you're going to be concatenating runs, you
+    only need to provide onsets relative to the beginning of the run.
 
     Supported output formats include 'spm', 'fidl', 'pickle'
 

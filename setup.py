@@ -3,11 +3,17 @@
 import os
 from setuptools import setup
 
-def read(fname):
-    fpath = os.path.join(os.path.dirname(__file__), fname)
-    if os.path.exists(fpath):
-      return open(fpath).read()
-    return ""
+def get_readme():
+    md_path = os.path.join(os.path.dirname(__file__), "README.md")
+    txt_path = os.path.join(os.path.dirname(__file__), "README.txt")
+
+    if os.path.exists(txt_path):
+        d = open(txt_path).read()
+    elif os.path.exists(md_path):
+        d = open(md_path).read()
+    else:
+        d = ""
+    return d
 
 setup(name='varys',
       version='0.5.0',
@@ -19,7 +25,7 @@ setup(name='varys',
       url='https://github.com/beOn/varys',
       install_requires=['scipy','chardet'],
       packages=['varys'],
-      long_description=read('README.md'),
+      long_description=get_readme(),
       classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Topic :: Scientific/Engineering :: Information Analysis',

@@ -4,7 +4,13 @@ import os
 # NOTE: all events should have onsets and durations in seconds. change to in ms as needed.
 
 class FileWriter(object):
-    """Abstract class for file writers"""
+    """Abstract class for file writers.
+
+    Subclasses should override supported_format() to return the string name of
+    the format they support (this can be any arbitrary name, but should be
+    something sensible). They should also override write_file().
+
+    """
     format_output_dir = None
     @classmethod
     def write_set(cls, format, event_lists, output_dir, forced_concat_events, **kwargs):
@@ -33,6 +39,17 @@ class FileWriter(object):
     def requires_concat(cls):
         return False
     def write_file(self, event_list, output_dir, idx=None):
+        """ Empty implementation of the main file writing method.
+
+        Parameters
+        ----------
+        event_list (list of dicts)
+            The events to be written.
+        output_dir (path to directory)
+            Directory in which files should be written.
+        idx (int)
+            The run index of the current file, or None.
+        """
         return NotImplementedError()
 
 class SPM_FileWriter(FileWriter):
