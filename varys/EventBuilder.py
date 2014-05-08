@@ -278,7 +278,70 @@ class RowWise_fMRI_EventBuilder(fMRI_EventBuilder, RowWise_EventBuilder):
      """
      def __init__(self):
          super(RowWise_fMRI_EventBuilder, self).__init__()
-          
+    
+class FixedDuration_EventBuilder(RowWise_EventBuilder):
+    """A simple event builder that handles well ordered tabular events.
+
+    Still in testing.
+
+    parameters
+    ----------
+    # TODO: document parameters
+    """
+    def __init__(self, duration=1.0, run_onset_cols=[], onset_cols=[], onset_func=None, name_cols=[], name_func=None, keep_names=None):
+        super(FixedDuration_EventBuilder,RowWise_EventBuilder).__init__()
+        self.duration = duration
+        self.run_onset_cols = run_onset_cols
+        self.onset_cols = onset_cols
+        self.name_cols = name_cols
+        self.name_func = name_func
+        self.keep_names = keep_names
+        # set at the start of each run:
+        self.run_onset = 0
+
+    def events_for_row(self, row_dict):
+        # get onset, apply onset_func if needed
+        onset = first_from_row(row_dict, self.onset_cols, float)
+        if onset and self.onset_func:
+            onset = self.onset_func(onset)
+        # get name, using first value, or passing all found values to name_func
+        if not self.name_func:
+            name = first_from_row(row_dict, self.name_cols)
+        else:
+            parts = []
+            for n in self.name_cols:
+                parts.append(row_dict.get(n, None))
+                name = self.name_func(*parts)
+        # if you're only keeping some names, ignore those you don't care about
+        if not name or not onset or (self.keep_names and not name in self.keep_names):
+            return
+        # build the event
+        return [{"name":name,"onset":onset,"duration":self.duration}]
+
+    def handle_run_start(self, run_idx, run_data, file_name):
+        if not self.run_onset_cols or not len(run_data) > 0:
+            self.run_onset = 0
+        else:
+            self.run_onset = first_from_row(run_data[0], self.run_onset_cols, func=float)
+        if self.onset_func:
+            self.run_onset = self.onset_func(self.run_onset)
+
+def first_from_row(row, cols_names, func=None):
+    val = None
+    if not row or not cols_names:
+        return val
+    for c in self.cols_names:
+        if not c in row or not row[c]:
+            continue
+        o = row[c]
+        if func:
+            try:
+                o = func(c)
+            except Exception, e:
+                continue
+        val = o
+        break
+    return val
 
 def events_to_event_sets(dict_lists, set_names):
     sets = {}
