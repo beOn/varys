@@ -141,18 +141,18 @@ eb.run()
 To get the details on this and the other subclasses, check out the noted in the
 related code. But since we're here, let's take this apart a little bit.
 
-```handle_run_start gets called at the start of every run, and as such is a
-```great place to find and set aside any run-wide variables, like run onset
-```time. That's exactly what we do in this example.
+```handle_run_start``` gets called at the start of every run, and as such is a
+great place to find and set aside any run-wide variables, like run onset time.
+That's exactly what we do in this example.
 
-```events_for_row gets called once per row of data in your original file, and is
-```expected to return a list of dicts (one dict per event). You might be
-```wondering what this set entry is all about, and why we return a list of
-```events, instead of just one. From time to time, analysis will require that
-```you create several different event sets - one including all trials, and one
-```including only those trials which were answered correctly, for example.
-```Suppose we wanted to do exactly this for the current example. Then we'd
-```change the if block of events_for_row to read as follows:
+```events_for_row``` gets called once per row of data in your original file,
+and is expected to return a list of dicts (one dict per event). You might be
+wondering what this set entry is all about, and why we return a list of
+events, instead of just one. From time to time, analysis will require that you
+create several different event sets - one including all trials, and one
+including only those trials which were answered correctly, for example.
+Suppose we wanted to do exactly this for the current example. Then we'd change
+the if block of events_for_row to read as follows:
 
 ```python
     if name and onset:
