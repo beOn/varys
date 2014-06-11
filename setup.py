@@ -16,7 +16,7 @@ def get_readme():
     return d
 
 setup(name='varys',
-      version='0.5.1',
+      version='0.5.2',
       author='Ben Acland',
       author_email='benacland@gmail.com',
       description='For parsing and reformatting behavioral event logs.',
