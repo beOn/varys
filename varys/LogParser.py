@@ -11,7 +11,7 @@ class LogParser(object):
 
     @classmethod
     def parse_file(cls, file_path, format_hint=None):
-        # TODO: choose a subclass based on extension or hint
+        # choose a subclass based on extension or hint
         subs = [TDF_LogParser, CSV_LogParser, FIDL_LogParser]
         parser = None
         if format_hint != None:
@@ -93,6 +93,4 @@ class FIDL_LogParser(LogParser):
                 continue
             events.append({"name":name,"onset":onset,"duration":duration,"tr_idx":tr_idx})
         return events
-
-            
 

@@ -25,11 +25,15 @@ class FileWriter(object):
         if writer.requires_concat():
             event_lists = forced_concat_events
         writer = writer()
+        new_files = []
         for i, event_list in enumerate(event_lists):
             idx = i
             if len(event_lists) == 1:
                 idx = None
-            writer.write_file(event_lists[i], output_dir, idx, **kwargs)
+            file_path = writer.write_file(event_lists[i], output_dir, idx, **kwargs)
+            if file_path:
+                new_files.append(file_path)
+        return new_files
 
     """Override in subclasses"""
     @classmethod
@@ -49,6 +53,11 @@ class FileWriter(object):
             Directory in which files should be written.
         idx (int)
             The run index of the current file, or None.
+
+        Returns
+        -------
+        file_list (list of paths)
+            The full path of the file that was written.
         """
         return NotImplementedError()
 
@@ -87,6 +96,8 @@ class SPM_FileWriter(FileWriter):
         onsets = np.array([onsets], dtype=object)
         durations = np.array([durations], dtype=object)
         savemat(out_path, mdict={'names':names, 'onsets':onsets, 'durations':durations})
+        return os.path.abspath(out_path)
+
 
 class FIDL_FileWriter(FileWriter):
     """writer of fidl event files"""
@@ -123,6 +134,7 @@ class FIDL_FileWriter(FileWriter):
         with open(out_path, 'w') as f:
             for line in lines:
                 print>>f, line
+        return os.path.abspath(out_path)
 
 class Pickle_FileWriter(FileWriter):
     """writer of spm event files"""
@@ -141,6 +153,7 @@ class Pickle_FileWriter(FileWriter):
         out_path = os.path.join(od, f_name)
         with open(out_path, 'wb') as f:
             cPickle.dump(event_list, f)
+        return os.path.abspath(out_path)
 
 class TDF_FileWriter(FileWriter):
     """writer of tdf .txt files"""
@@ -171,4 +184,5 @@ class TDF_FileWriter(FileWriter):
                             dialect=excel_tab)
             dw.writer.writerow(cols)
             dw.writerows(event_list)
+        return os.path.abspath(out_path)
 

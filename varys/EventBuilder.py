@@ -45,6 +45,7 @@ class EventBuilder(object):
         self.output_formats = ['pickle']
         self.last_event_sets = None
         self.skip_output = False
+        self.event_files = None
         self.sub_data = {}
         super(EventBuilder, self).__init__()
     
@@ -52,6 +53,7 @@ class EventBuilder(object):
         self.check_settings()
         # convert raw logs per subject
         self.sub_data = {}
+        self.event_files = {}
         for sub in self.subjects:
             self.current_sub = sub
             # so subclasses can do... whatever
@@ -108,14 +110,21 @@ class EventBuilder(object):
                     event_sets[set_name] = concat_event_lists(event_sets[set_name], durations)
             # write each of the requested file formats, plus a pickle format
             if not self.skip_output:
+                self.event_files[sub] = {}
                 for set_name in event_sets.keys():
+                    self.event_files[sub][set_name] = {}
                     set_dir = os.path.join(sub_dir, set_name)
                     ensure_dir(set_dir)
                     ofs = self.output_formats
                     if not 'pickle' in ofs:
                         ofs.append('pickle')
                     for format in ofs:
-                        FileWriter.write_set(format, event_sets[set_name], set_dir, forced_concat_events.get(set_name,None), **self.get_write_args())
+                        ev_files = FileWriter.write_set(format,
+                                             event_sets[set_name],
+                                             set_dir,
+                                             forced_concat_events.get(set_name,None),
+                                             **self.get_write_args())
+                    self.event_files[sub][set_name][format] = ev_files
             self.sub_data[sub] = event_sets
         self.current_sub = None
 
